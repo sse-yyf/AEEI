@@ -1,13 +1,12 @@
 clear all
 	
-/*=========================================================================*/
-/*                        ANGRIST AND KRUEGER (1991)                       */
-/*=========================================================================*/
-	
-** UPLOAD DATA: ANGRIST & KRUEGER (1991)
-use "../input/NEW7080.dta", clear
+***************************************************************************
+*                        ANGRIST AND KRUEGER (1991)                       *
+***************************************************************************
 
-** RENAME VARIABLES
+use ../input/NEW7080.dta, clear
+
+*** RENAME VARIABLES ***
 rename v1 AGE
 rename v2 AGEQ
 rename v4 EDUC
@@ -27,7 +26,7 @@ rename v24 WNOCENT
 rename v25 WSOCENT
 rename v27 YOB
 
-** COHORT
+*** COHORT ***
 replace YOB = YOB-1900 if YOB >50
 gen COHORT=2029
 replace COHORT=3039 if YOB<=39 & YOB >=30
@@ -35,21 +34,21 @@ replace COHORT=4049 if YOB<=49 & YOB >=40
 replace AGEQ=AGEQ-1900 if CENSUS==80
 gen AGEQSQ= AGEQ*AGEQ
 
-** GENERATE YOB DUMMIES
+*** GENERATE YOB DUMMIES ***
 foreach i of numlist 0/9 {
 
 	gen byte YR2`i' = YOB==2`i' | YOB==3`i' | YOB==4`i'
 
 }
 	
-** GENERATE QOB DUMMIES
+*** GENERATE QOB DUMMIES ***
 foreach i of numlist 1/4 {
 
 	gen byte QTR`i' = QOB==`i'
 
 }
 
-** GENERATE YOB*QOB DUMMIES
+*** GENERATE YOB*QOB DUMMIES ***
 foreach i of numlist 1/3 {
 	foreach j of numlist 0/9 {
 	
@@ -58,7 +57,7 @@ foreach i of numlist 1/3 {
 	}
 }
 
-** LABELING VARIABLE USED IN THE TABLE 
+*** LABELING VARIABLE USED IN THE TABLE ***
 la var EDUC 		"Years of education"
 la var RACE 		"Race (1 = black)"
 la var SMSA 		"SMSA (1 = center city)"
@@ -66,23 +65,23 @@ la var MARRIED 		"Married (1 = married)"
 la var AGEQ 		"Age (quarterly)"
 la var AGEQSQ		"Age-squared"
 
-** SAVING THE DATA FOR EACH COHORT
+*** SAVING THE DATA FOR EACH COHORT ***
 local c2 "IV"
 local c3 "V"
 local c4 "VI"
 forval i = 2/4 {
 preserve
 keep if COHORT==`i'0`i'9
-save "../output/Table`c`i''_Data.dta", replace 
+save ../output/Table`c`i''_Data.dta, replace 
 restore
 }
 
-** KEEP ONLY RELEVANT VARIABLES FOR VALUE REVIEW AND REGRESSION
+*** KEEP ONLY RELEVANT VARIABLES FOR VALUE REVIEW AND REGRESSION ***
 keep AGE AGEQ EDUC ENOCENT ESOCENT LWKLYWGE MARRIED MIDATL MT ///
 	 NEWENG CENSUS QOB RACE SMSA SOATL WNOCENT WSOCENT COHORT AGEQSQ ///
 	 YR* QTR*
 
-** VARIABLE LABELING
+*** VARIABLE LABELING ***
 la var AGE 			"Age"
 la var ENOCENT 		"En 0 cent"
 la var ESOCENT 		"Es 0 cent"
@@ -94,27 +93,26 @@ la var WNOCENT 		"Wn 0 cent"
 la var WSOCENT 		"Ws 0 cent"
 la var COHORT 		"Cohort"
 
-** SAVING FULL SAMPLE DATSET
-save "$outputpath/AK91_Data.dta", replace 
+*** SAVING FULL SAMPLE DATSET ***
+save ../output/AK91_Data.dta, replace 
 
+***************************************************************************
+*                        ANGRIST AND LAVY (1999)                          *
+***************************************************************************
 
-/*=========================================================================*/
-/*                          ANGRIST AND LAVY (1999)                        */
-/*=========================================================================*/
-
-** VARIABLE RENAMING AND LABELING OF ANGRIST AND LAVY (1999) DATA
+*** VARIABLE RENAMING AND LABELING OF ANGRIST AND LAVY (1999) DATA ***
 	
 
 forval i = 4/5 {
 
-use "$inputpath/final`i'.dta", clear
+use ../input/final`i'.dta, clear
 
-** KEEP ONLY RELEVANT VARIABLES FOR VALUE REVIEW
+*** KEEP ONLY RELEVANT VARIABLES FOR VALUE REVIEW ***
 keep c_size c_boys c_girls c_num`i'rd c_type ///
 	 flgrm`i' mrkgrm`i' ngrm`i' flmth`i' mrkmth`i' nmth`i' ///
 	 grade cohsize mathsize avgmath passmath verbsize avgverb passverb
 
-** CORRECTING VALUES OF VARIABLES
+*** CORRECTING VALUES OF VARIABLES ***
 replace avgverb= avgverb-100 if avgverb>100
 replace avgmath= avgmath-100 if avgmath>100
 
@@ -124,12 +122,12 @@ replace passverb=. if verbsize==0
 replace avgmath=. if mathsize==0
 replace passmath=. if mathsize==0
 
-** VARIABLE RENAMING
+*** VARIABLE RENAMING ***
 foreach var in flgrm mrkgrm ngrm flmth mrkmth nmth {
 	rename `var'`i' `var'
 }
 
-** VARIABLE LABELING
+*** VARIABLE LABELING ***
 la var c_size 		"Class size"
 la var c_boys 		"Number of boys in class"
 la var c_girls 		"Number of firls in class"
@@ -151,7 +149,7 @@ la var avgverb 		"Grammar score"
 la var passverb		"Pass grammar test"
 
 
-save "$outputpath/AL99_Grade`i'_Data.dta", replace 
+save ../output/AL99_Grade`i'_Data.dta, replace 
 
 }
 
