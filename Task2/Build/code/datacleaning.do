@@ -73,6 +73,7 @@ forval i = 2/4 {
 preserve
 keep if COHORT==`i'0`i'9
 save ../output/Table`c`i''_Data.dta, replace 
+save ../../Analysis/input/Table`c`i''_Data.dta, replace 
 restore
 }
 
@@ -95,6 +96,7 @@ la var COHORT 		"Cohort"
 
 *** SAVING FULL SAMPLE DATSET ***
 save ../output/AK91_Data.dta, replace 
+save ../../Analysis/input/AK91_Data.dta, replace 
 
 ***************************************************************************
 *                        ANGRIST AND LAVY (1999)                          *
@@ -150,7 +152,7 @@ la var passverb		"Pass grammar test"
 
 
 save ../output/AL99_Grade`i'_Data.dta, replace 
-
+save ../../Analysis/input/AL99_Grade`i'_Data.dta, replace 
 }
 
 *** END OF DO FILE ***
