@@ -3,23 +3,42 @@ library(cluster)
 library(factoextra)
 library(ggrepel)
 
-df <- read.csv("../input/selected_WV6.csv")
-rownames(df) <- df[,1]
-df <- df[,c("Job","Democracy","Strong_Leader","Poli_Leader","University","Business")]
+df_q <- read.csv("../input/t_by_country.csv")
+rownames(df_q) <- df_q$Variables
+df_q <- df_q[, !colnames(df_q) %in% c("Variables")]
+
+df <- read.csv("../input/by_country.csv")
+rownames(df) <- df$country_name
+df <- df[, !colnames(df) %in% c("country_name")]
+
+#####################################
+###    Analysis for Questions     ###
+#####################################
+
+km_result_q <- kmeans(df_q, centers = 6,nstart = 10,algorithm="Hartigan-Wong",iter.max=20)
+kmeans_q_figure <- fviz_cluster(km_result_q, df_q,
+             geom.label = TRUE,      # Show labels for data points
+             palette = c("#66CCFF", "#00FFCC","#E7B800", "#EE0000","#f5ccd8","#006666","#FC4E07"),
+             #ellipse.type = "euclid",
+             star.plot = TRUE, 
+             repel = TRUE,
+             main="K-means Cluster plot",
+             ggtheme = theme_minimal()
+)
+
+ggsave("../outcome/kmeans_questions.png", plot = kmeans_q_figure)
 
 #####################################
 ###           Analysis            ###
 #####################################
 
 
-
-# kmeans
-km_result <- kmeans(df[,c("Job","Democracy")], centers = 7,nstart = 10,algorithm="Hartigan-Wong",iter.max=20)
-
-
-
 # prcomp()
 pca <- prcomp(df, scale = TRUE)
+
+
+# kmeans
+km_result <- kmeans(df, centers = 7,nstart = 10,algorithm="Hartigan-Wong",iter.max=20)
 
 
 #####################################
@@ -29,7 +48,7 @@ pca <- prcomp(df, scale = TRUE)
 
 
 # kmeans
-kmeans_figure <- fviz_cluster(km_result, df[,c("Job","Democracy")],
+ fviz_cluster(km_result, df,
              geom.label = TRUE,      # Show labels for data points
              palette = c("#66CCFF", "#00FFCC","#E7B800", "#EE0000","#f5ccd8","#006666","#FC4E07"),
              #ellipse.type = "euclid",
