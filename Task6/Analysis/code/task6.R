@@ -46,6 +46,8 @@ ggplot(data = covariates_test, aes(x = preds)) +
   geom_histogram(fill = "lightblue", color = "black", alpha = 0.7) +
   labs(title = "Predicted treatment effects", x = "Treatment effects", y = "Frequency")
 
+ggsave("../outcome/Predicted treatment effects.png")
+
 # Ex4
 covariate_names <- names(df)[-c(1,2)]
 var_imp <- c(variable_importance(cf))
@@ -60,6 +62,8 @@ ggplot(data = predict_means, aes(x = age, y = mean_predicted_te)) +
   geom_bar(stat = "identity", fill = "lightblue", color = "black", alpha = 0.7) +  
   labs(title = "Mean Predicted Treatment Effects by Age", x = "Age", y = "Mean Predicted Treatment Effects")
 
+ggsave("../outcome/Mean Predicted treatment effects by Age.png")
+
 predict_means <- covariates_test %>%  
   group_by(sdo) %>%  
   summarize(mean_predicted_te = mean(preds))  
@@ -67,3 +71,5 @@ predict_means <- covariates_test %>%
 ggplot(data = predict_means, aes(x = sdo, y = mean_predicted_te)) +
   geom_bar(stat = "identity", fill = "lightblue", color = "black", alpha = 0.7) +  
   labs(title = "Mean Predicted Treatment Effects by sdo", x = "sdo", y = "Mean Predicted Treatment Effects")
+
+ggsave("../outcome/Mean Predicted treatment effects by sdo.png")
