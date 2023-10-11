@@ -8,20 +8,38 @@ load("../input/politician_gender_prefs.rdata")
 
 set.seed(123456)
 
+df$y <- as.numeric(df$picked_cand_a)
+df$w <- as.numeric(df$cand_a_female)
+df<- one_hot(
+  data.table(
+    df
+  ) 
+)
+
 # Ex1
 
 ols <- lm(picked_cand_a ~ cand_a_female, df)
 summary(ols)
 
-# Ex2
-df$y <- as.numeric(df$picked_cand_a)
-df$w <- as.numeric(df$cand_a_female)
-df<- one_hot(
-          data.table(
-            df
-            ) 
-          )
 
+## female* raceWhite
+reg_fW <- lm(picked_cand_a ~ cand_a_female + cand_a_female:race_White,data = df)
+summary(reg_fW)
+
+## female* raceHispanic
+reg_fH <- lm(picked_cand_a ~ cand_a_female + cand_a_female:race_Hispanic, data = df)
+summary(reg_fH)
+
+## female* raceBlack
+reg_fB <- lm(picked_cand_a ~ cand_a_female + cand_a_female:race_Black, data = df)
+summary(reg_fB)
+
+## female* racePther
+reg_fO <- lm(picked_cand_a ~ cand_a_female + cand_a_female:race_Other, data = df)
+summary(reg_fO)
+
+
+# Ex2
 train_fraction <- 0.75  # Use train_fraction % of the dataset to train our models
 n <- dim(df)[1]
 train_idx <- sample.int(n, replace=F, size=floor(n*train_fraction))
@@ -40,6 +58,7 @@ cf<- causal_forest(
 covariates_test <- select(df_test,-cand_a_female, -picked_cand_a)
 test_pred<- predict(cf, newdata=as.matrix(covariates_test), estimate.variance=TRUE)
 covariates_test$preds<- test_pred$predictions
+
 
 # Ex3
 ggplot(data = covariates_test, aes(x = preds)) +
